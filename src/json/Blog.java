@@ -1,8 +1,6 @@
 
 package json;
 
-import java.util.List;
-
 public class Blog{
    	private boolean ask;
    	private boolean ask_anon;

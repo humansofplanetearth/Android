@@ -1,5 +1,4 @@
 package json;
-import com.fasterxml.*;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -7,11 +6,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class BlogTest  
@@ -30,7 +27,7 @@ public class BlogTest
 		
 		//Different attempt
 		JsonFactory f = new MappingJsonFactory();
-		com.fasterxml.jackson.core.JsonParser jp = f.createJsonParser(jasonUrl);
+		com.fasterxml.jackson.core.JsonParser jp = f.createParser(jasonUrl);
 		JsonToken current;
 		current = jp.nextToken();
 		
@@ -66,7 +63,6 @@ public class BlogTest
 			}
 		}
 	}
-
 }
 
 

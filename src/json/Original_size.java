@@ -1,8 +1,6 @@
 
 package json;
 
-import java.util.List;
-
 public class Original_size{
    	private Number height;
    	private String url;

@@ -1,8 +1,6 @@
 
 package json;
 
-import java.util.List;
-
 public class Alt_sizes{
    	private Number height;
    	private String url;

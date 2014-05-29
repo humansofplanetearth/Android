@@ -1,8 +1,6 @@
 
 package json;
 
-import java.util.List;
-
 public class Image{
    	private Meta meta;
    	private Response response;

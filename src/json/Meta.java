@@ -1,8 +1,6 @@
 
 package json;
 
-import java.util.List;
-
 public class Meta{
    	private String msg;
    	private Number status;

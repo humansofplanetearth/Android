@@ -3,7 +3,7 @@ package json;
 
 import java.util.List;
 
-public class Posts{
+public class Posts {
    	private String blog_name;
    	private String caption;
    	private String date;

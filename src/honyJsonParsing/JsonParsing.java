@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 
 public class JsonParsing {
@@ -26,7 +24,6 @@ public class JsonParsing {
 	private String blogName;
 	private URL jsonURL;
 	
-	
 	public JsonParsing(URL jsonLocation, String blogNameToFind)
 	{
 		jsonURL = jsonLocation;
@@ -36,7 +33,7 @@ public class JsonParsing {
 	public void parseFile() throws JsonParseException, IOException //TODO, simplify and break into smaller methods
 	{
 		JsonFactory f = new MappingJsonFactory();
-		com.fasterxml.jackson.core.JsonParser jp = f.createJsonParser(jsonURL);
+		com.fasterxml.jackson.core.JsonParser jp = f.createParser(jsonURL);
 		JsonToken current;
 		current = jp.nextToken();
 		
@@ -111,9 +108,3 @@ public class JsonParsing {
 	}
 	
 }
-
-
-
-
-
-
