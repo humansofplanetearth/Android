@@ -1,6 +1,6 @@
 package com.hony.app.Model;
 
-public class Blog{
+public class Blog {
     private boolean ask;
     private boolean ask_anon;
     private String ask_page_title;

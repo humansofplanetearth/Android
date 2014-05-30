@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import java.io.IOException;
 import java.net.URL;
 
-public class BlogTest  
+public class BlogTest
 {
     public static void main (String args[]) throws JsonParseException, JsonMappingException, IOException
     {
@@ -28,7 +28,7 @@ public class BlogTest
 
         //Different attempt
         JsonFactory f = new MappingJsonFactory();
-        com.fasterxml.jackson.core.JsonParser jp = f.createParser(jasonUrl);
+        com.fasterxml.jackson.core.JsonParser jp = f.createJsonParser(jasonUrl);
         JsonToken current;
         current = jp.nextToken();
 
@@ -48,21 +48,21 @@ public class BlogTest
             {
                 if (current == JsonToken.START_ARRAY)
                 {
-                      // For each of the records in the array
-                      while (jp.nextToken() != JsonToken.END_ARRAY)
-                      {
-                          JsonNode node = jp.readValueAsTree();
-                          // And now we have random access to everything in the object
-                          System.out.println("blog name: " + node.get("blog_name").asText());
-                      }
+                    // For each of the records in the array
+                    while (jp.nextToken() != JsonToken.END_ARRAY)
+                    {
+                        JsonNode node = jp.readValueAsTree();
+                        // And now we have random access to everything in the object
+                        System.out.println("blog name: " + node.get("blog_name").asText());
+                    }
                 }
             }
             else
             {
                 System.out.println("Unprocessed property: " + fieldName);
-                  jp.skipChildren();
+                jp.skipChildren();
             }
         }
     }
-}
-*/
+
+}*/
