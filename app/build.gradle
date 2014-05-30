@@ -16,6 +16,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
+
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+    }
 }
 
 dependencies {
@@ -26,4 +31,5 @@ dependencies {
     compile files('src/main/java/com/hony/javalibs/jackson-core-2.2.3.jar')
     compile files('src/main/java/com/hony/javalibs/jackson-databind-2.2.3.jar')
     compile files('src/main/java/com/hony/javalibs/jumblr-0.0.10-jar-with-dependencies.jar')
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.3'
 }
