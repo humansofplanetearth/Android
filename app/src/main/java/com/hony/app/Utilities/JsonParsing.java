@@ -84,7 +84,7 @@ public class JsonParsing {
     }
 
     private String getData(String dataName) throws IOException {
-        while(! fieldName.equals(dataName)) {
+        while (! dataName.equals(fieldName)) {
             JsonToken current = jsonParser.nextToken();
             fieldName = jsonParser.getCurrentName();
         }
