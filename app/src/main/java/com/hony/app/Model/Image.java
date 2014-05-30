@@ -1,6 +1,6 @@
 package com.hony.app.Model;
 
-public class Image{
+public class Image {
     private Meta meta;
     private Response response;
 
@@ -19,7 +19,7 @@ public class Image{
         return this.response;
     }
 
-    public void setResponse(Response response){
+    public void setResponse(Response response) {
         this.response = response;
     }
 }

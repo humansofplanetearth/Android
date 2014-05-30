@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -22,10 +23,7 @@ public class JsonParsing {
     private URL jsonURL;
     private int counter;
     private String fieldName;
-    private JsonFactory factory;
-    private ObjectMapper mapper;
     private ObjectNode node;
-    private JsonToken current;
     private com.fasterxml.jackson.core.JsonParser jsonParser;
 
     public JsonParsing(URL jsonLocation) {
@@ -33,14 +31,13 @@ public class JsonParsing {
     }
 
     // TODO: simplify and break into smaller methods
-    public void parseFile(int layers, ArrayList<String> data) throws JsonParseException, IOException {
+    public void parseFile(int layers, List<String> data) throws IOException {
         fieldName = null;
-
-        factory = new JsonFactory();
+        JsonFactory factory = new JsonFactory();
         jsonParser = factory.createParser(jsonURL);
 
         //Wrapper for jp to a java object with its parser set as jp
-        mapper = new ObjectMapper(factory);
+        ObjectMapper mapper = new ObjectMapper(factory);
         jsonParser.setCodec(mapper);
         node = mapper.createObjectNode();
 
@@ -67,11 +64,11 @@ public class JsonParsing {
         }
     }
 
-    private void goLayer(int layers) throws JsonParseException, IOException {
+    private void goLayer(int layers) throws IOException {
         String fieldToFind = setLayerString(counter + 1);
 
         while(jsonParser.nextToken() != JsonToken.END_OBJECT) {
-
+            JsonToken current;
             fieldName = jsonParser.getCurrentName();
             current = jsonParser.nextToken();
 
@@ -86,9 +83,9 @@ public class JsonParsing {
         }
     }
 
-    private String getData(String dataName) throws JsonParseException, IOException {
-        while(fieldName != dataName) {
-            current = jsonParser.nextToken();
+    private String getData(String dataName) throws IOException {
+        while(! fieldName.equals(dataName)) {
+            JsonToken current = jsonParser.nextToken();
             fieldName = jsonParser.getCurrentName();
         }
         node = jsonParser.readValueAsTree();
@@ -105,12 +102,12 @@ public class JsonParsing {
         }
     }
 
-    public static void main(String args[]) throws MalformedURLException, JsonParseException, IOException {
+    public static void main(String args[]) throws IOException {
         URL url = new URL("http://api.tumblr.com/v2/blog/humansofnewyork.com/posts?api_key=7ag2CJXOuxuW3vlVS5wQG6pYA6a2ZQcSCjzZsAp2pDbVwf3xEk&notes_info=true&filter=text");
 
         JsonParsing parse = new JsonParsing(url);
 
-        ArrayList<String> urls = new ArrayList<String>();
+        List<String> urls = new ArrayList<String>();
         parse.parseFile(3, urls);
 
         System.out.println(urls.size());

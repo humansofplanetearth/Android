@@ -9,6 +9,14 @@ public class Original_size{
     public Original_size() {
     }
 
+    public Number getWidth(){
+        return this.width;
+    }
+
+    public void setWidth(Number width){
+        this.width = width;
+    }
+
     public Number getHeight(){
         return this.height;
     }
@@ -23,13 +31,5 @@ public class Original_size{
 
     public void setUrl(String url){
         this.url = url;
-    }
-
-    public Number getWidth(){
-        return this.width;
-    }
-
-    public void setWidth(Number width){
-        this.width = width;
     }
 }

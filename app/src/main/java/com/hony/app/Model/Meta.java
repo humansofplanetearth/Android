@@ -1,6 +1,6 @@
 package com.hony.app.Model;
 
-public class Meta{
+public class Meta {
     private String msg;
     private Number status;
 
