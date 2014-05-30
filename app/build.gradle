@@ -24,12 +24,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:19.+'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.3'
+    compile 'com.android.support:support-v4:18.0.0'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    
     compile files('src/main/java/com/hony/javalibs/gson-2.2.4.jar')
     compile files('src/main/java/com/hony/javalibs/jackson-annotations-2.2.3.jar')
     compile files('src/main/java/com/hony/javalibs/jackson-core-2.2.3.jar')
     compile files('src/main/java/com/hony/javalibs/jackson-databind-2.2.3.jar')
     compile files('src/main/java/com/hony/javalibs/jumblr-0.0.10-jar-with-dependencies.jar')
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.3.3'
 }
