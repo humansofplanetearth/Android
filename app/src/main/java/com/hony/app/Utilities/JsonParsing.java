@@ -22,7 +22,7 @@ public class JsonParsing {
 
     private URL jsonURL;
     private int counter;
-    private String fieldName;
+    // TODO: REMOVE private String fieldName;
     private ObjectNode node;
     private com.fasterxml.jackson.core.JsonParser jsonParser;
 
@@ -32,7 +32,6 @@ public class JsonParsing {
 
     // TODO: simplify and break into smaller methods
     public void parseFile(int layers, List<String> data) throws IOException {
-        fieldName = null;
         JsonFactory factory = new JsonFactory();
         jsonParser = factory.createParser(jsonURL);
 
@@ -69,7 +68,7 @@ public class JsonParsing {
 
         while(jsonParser.nextToken() != JsonToken.END_OBJECT) {
             JsonToken current;
-            fieldName = jsonParser.getCurrentName();
+            String fieldName = jsonParser.getCurrentName();
             current = jsonParser.nextToken();
 
             //Find the area to start searching the file
@@ -84,6 +83,7 @@ public class JsonParsing {
     }
 
     private String getData(String dataName) throws IOException {
+        String fieldName = null;
         while (! dataName.equals(fieldName)) {
             JsonToken current = jsonParser.nextToken();
             fieldName = jsonParser.getCurrentName();
