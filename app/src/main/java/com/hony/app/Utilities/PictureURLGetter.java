@@ -62,19 +62,47 @@ public class PictureURLGetter {
     private void processPost(JsonParser jsonParser) throws IOException {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
-            jsonParser.nextToken();
             if (fieldName.equals("photos")) {
-                System.err.println("Entering \"photos\"");
                 processPhotos(jsonParser);
-                System.err.println("Leaving \"photos\"");
             } else {
+                jsonParser.nextToken();
                 jsonParser.skipChildren();
             }
         }
     }
 
     private void processPhotos(JsonParser jsonParser) throws IOException {
-        jsonParser.skipChildren();
+        jsonParser.nextToken(); // Skip JsonToken.START_ARRAY
+        while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
+            processPhoto(jsonParser);
+        }
+    }
+
+    private void processPhoto(JsonParser jsonParser) throws IOException {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jsonParser.getCurrentName();
+            jsonParser.nextToken();
+            if (fieldName.equals("original_size")) {
+                processOriginalSize(jsonParser);
+            } else {
+                if (jsonParser.getCurrentToken() == JsonToken.START_ARRAY ||
+                        jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
+                    jsonParser.skipChildren();
+                }
+            }
+        }
+    }
+
+    private void processOriginalSize(JsonParser jsonParser) throws IOException {
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+            String fieldName = jsonParser.getCurrentName();
+            jsonParser.nextToken();
+            if (fieldName.equals("width") || fieldName.equals("height")) {
+                System.err.println(fieldName + ": " + jsonParser.getIntValue());
+            } else {
+                System.err.println(fieldName + ": " + jsonParser.getText());
+            }
+        }
     }
 
     
