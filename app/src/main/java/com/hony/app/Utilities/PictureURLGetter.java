@@ -2,6 +2,8 @@ package com.hony.app.Utilities;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -9,26 +11,40 @@ import com.fasterxml.jackson.core.JsonToken;
 
 public class PictureURLGetter {
 
-    final static String baseUrl = "http://api.tumblr.com/v2/blog/humansofnewyork.com/posts/photo";
-    final static String tumblrAPIKey = "7ag2CJXOuxuW3vlVS5wQG6pYA6a2ZQcSCjzZsAp2pDbVwf3xEk";
-    final static int picturesPerQuery = 3;
-    final static int pictureOffset = 0;
+    private final static String baseUrl = "http://api.tumblr.com/v2/blog/humansofnewyork.com/posts/photo";
+    private final static String tumblrAPIKey = "7ag2CJXOuxuW3vlVS5wQG6pYA6a2ZQcSCjzZsAp2pDbVwf3xEk";
+    private final static int picturesPerQuery = 3;
+    private int pictureOffset = 0;
+    private List<URL> urls;
+    private int urlsReported = 0;
 
-    public PictureURLGetter() throws IOException {
+    public PictureURLGetter() {
+        this.urls = new ArrayList<URL>();
+    }
+
+    public URL next() throws IOException {
+        if (urlsReported >=urls.size()) {
+            this.loadURLs();
+        }
+        return urls.get(urlsReported++);
+    }
+
+    private void loadURLs() throws IOException {
         URL tumblrAPIURL = new URL(baseUrl +
                 "?api_key=" + tumblrAPIKey +
                 "&filter=text" +
                 "&limit=" + picturesPerQuery +
                 "&offset=" + pictureOffset);
+        pictureOffset += picturesPerQuery;
         JsonFactory jsonFactory = new JsonFactory();
         JsonParser jsonParser = jsonFactory.createParser(tumblrAPIURL);
 
-        jsonParser.nextToken(); // Skip the JsonToken.START_OBJECT
         processJsonRoot(jsonParser);
         jsonParser.close();
     }
 
     private void processJsonRoot(JsonParser jsonParser) throws IOException {
+        jsonParser.nextToken(); // Skip the JsonToken.START_OBJECT
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
@@ -97,10 +113,10 @@ public class PictureURLGetter {
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = jsonParser.getCurrentName();
             jsonParser.nextToken();
-            if (fieldName.equals("width") || fieldName.equals("height")) {
-                System.err.println(fieldName + ": " + jsonParser.getIntValue());
+            if (fieldName.equals("url")) {
+                urls.add(new URL(jsonParser.getText()));
             } else {
-                System.err.println(fieldName + ": " + jsonParser.getText());
+                // Ignore other fields
             }
         }
     }
@@ -108,5 +124,8 @@ public class PictureURLGetter {
     
     public static void main(String args[]) throws IOException {
         PictureURLGetter pictureURLGetter = new PictureURLGetter();
+        for (int i = 0; i < 20; ++ i) {
+            System.out.println(pictureURLGetter.next());
+        }
     }
 }
