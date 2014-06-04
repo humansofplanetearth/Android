@@ -1,12 +1,18 @@
 package com.hony.app.Activities;
 
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.hony.app.R;
+import com.hony.app.Utilities.PictureURLGetter;
+
 import android.content.Intent;
+
+import java.io.IOException;
+import java.net.URL;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -15,6 +21,17 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // FIXME: Experimental code
+        PictureURLGetter pictureURLGetter = new PictureURLGetter();
+        try {
+            URL imageURL = pictureURLGetter.next();
+            // http://stackoverflow.com/questions/8937180/how-to-show-image-in-android-using-java-code
+            // http://stackoverflow.com/questions/3375166/android-drawable-images-from-url
+
+        } catch (IOException e) {
+            // TODO: Show a message indicating that something went wrong (most probably no internet connection)
+            e.printStackTrace();
+        }
     }
 
 
