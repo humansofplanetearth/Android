@@ -1,13 +1,18 @@
 package com.hony.app.Utilities;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PictureURLGetter {
 
@@ -22,107 +27,65 @@ public class PictureURLGetter {
         this.urls = new ArrayList<URL>();
     }
 
-    public URL next() throws IOException {
-        if (urlsReported >=urls.size()) {
+    public URL next() throws IOException, JSONException {
+        if (urlsReported >= urls.size()) {
             this.loadURLs();
         }
         return urls.get(urlsReported++);
     }
 
-    private void loadURLs() throws IOException {
+    private void loadURLs() throws IOException, JSONException {
         URL tumblrAPIURL = new URL(baseUrl +
                 "?api_key=" + tumblrAPIKey +
                 "&filter=text" +
                 "&limit=" + picturesPerQuery +
                 "&offset=" + pictureOffset);
-        pictureOffset += picturesPerQuery;
-        JsonFactory jsonFactory = new JsonFactory();
-        JsonParser jsonParser = jsonFactory.createParser(tumblrAPIURL);
-
-        processJsonRoot(jsonParser);
-        jsonParser.close();
-    }
-
-    private void processJsonRoot(JsonParser jsonParser) throws IOException {
-        jsonParser.nextToken(); // Skip the JsonToken.START_OBJECT
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jsonParser.getCurrentName();
-            jsonParser.nextToken();
-            if (fieldName.equals("response")) {
-                processResponse(jsonParser);
-            } else {
-                jsonParser.skipChildren();
+        JSONObject jsonRoot = readJsonFromUrl(tumblrAPIURL);
+        // TODO: Check JSONObject "meta"
+        JSONObject jsonResponse = jsonRoot.getJSONObject("response");
+        JSONArray jsonPosts = jsonResponse.getJSONArray("posts");
+        int numberOfPosts = jsonPosts.length();
+        for (int i = 0; i < numberOfPosts; ++ i) {
+            JSONObject post = jsonPosts.getJSONObject(i);
+            JSONArray photos = post.getJSONArray("photos");
+            int numberOfPhotos = photos.length();
+            for (int j = 0; j < numberOfPhotos; ++ j) {
+                JSONObject photo = photos.getJSONObject(j);
+                // FIXME: Not sure if "original_size" is always available,
+                // because it's not specified in the api documentation (http://www.tumblr.com/docs/en/api/v2)
+                JSONObject original_size = photo.getJSONObject("original_size");
+                String imageUrl = original_size.getString("url");
+                urls.add(new URL(imageUrl));
             }
         }
+
     }
 
-    private void processResponse(JsonParser jsonParser) throws IOException {
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jsonParser.getCurrentName();
-            jsonParser.nextToken();
-            if (fieldName.equals("posts")) {
-                processPosts(jsonParser);
-            } else {
-                jsonParser.skipChildren();
-            }
+    // FROM: http://stackoverflow.com/a/4308662/1928529
+    private static String readAll(Reader rd) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        int cp;
+        while ((cp = rd.read()) != -1) {
+            sb.append((char) cp);
         }
+        return sb.toString();
     }
 
-    private void processPosts(JsonParser jsonParser) throws IOException {
-        jsonParser.nextToken(); // Skip JsonToken.START_ARRAY
-        while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            processPost(jsonParser);
-        }
-    }
-
-    private void processPost(JsonParser jsonParser) throws IOException {
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jsonParser.getCurrentName();
-            if (fieldName.equals("photos")) {
-                processPhotos(jsonParser);
-            } else {
-                jsonParser.nextToken();
-                jsonParser.skipChildren();
-            }
-        }
-    }
-
-    private void processPhotos(JsonParser jsonParser) throws IOException {
-        jsonParser.nextToken(); // Skip JsonToken.START_ARRAY
-        while (jsonParser.nextToken() != JsonToken.END_ARRAY) {
-            processPhoto(jsonParser);
-        }
-    }
-
-    private void processPhoto(JsonParser jsonParser) throws IOException {
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jsonParser.getCurrentName();
-            jsonParser.nextToken();
-            if (fieldName.equals("original_size")) {
-                processOriginalSize(jsonParser);
-            } else {
-                if (jsonParser.getCurrentToken() == JsonToken.START_ARRAY ||
-                        jsonParser.getCurrentToken() == JsonToken.START_OBJECT) {
-                    jsonParser.skipChildren();
-                }
-            }
-        }
-    }
-
-    private void processOriginalSize(JsonParser jsonParser) throws IOException {
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String fieldName = jsonParser.getCurrentName();
-            jsonParser.nextToken();
-            if (fieldName.equals("url")) {
-                urls.add(new URL(jsonParser.getText()));
-            } else {
-                // Ignore other fields
-            }
+    // FROM: http://stackoverflow.com/a/4308662/1928529
+    public static JSONObject readJsonFromUrl(URL url) throws IOException, JSONException {
+        InputStream is = url.openStream();
+        try {
+            BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+            String jsonText = readAll(rd);
+            JSONObject json = new JSONObject(jsonText);
+            return json;
+        } finally {
+            is.close();
         }
     }
 
     
-    public static void main(String args[]) throws IOException {
+    public static void main(String args[]) throws IOException, JSONException {
         PictureURLGetter pictureURLGetter = new PictureURLGetter();
         for (int i = 0; i < 20; ++ i) {
             System.out.println(pictureURLGetter.next());

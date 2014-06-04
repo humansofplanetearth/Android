@@ -15,6 +15,8 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.ImageView;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -47,6 +49,9 @@ public class MainActivity extends ActionBarActivity {
                 Drawable drawable = drawable_from_url(imageURL, "");
                 return drawable;
             } catch (IOException e) {
+                // TODO: Show a message indicating that something went wrong (most probably no internet connection)
+                e.printStackTrace();
+            } catch (JSONException e) {
                 // TODO: Show a message indicating that something went wrong (most probably no internet connection)
                 e.printStackTrace();
             }
