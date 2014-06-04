@@ -37,6 +37,7 @@ public class MainActivity extends ActionBarActivity {
         // FIXME: Experimental code
 
         // TODO: Do something sensible if there are multiple urls
+        @Override
         protected Drawable doInBackground(Void... notUsed) {
             PictureURLGetter pictureURLGetter = new PictureURLGetter();
             try {
@@ -50,6 +51,7 @@ public class MainActivity extends ActionBarActivity {
             return null;
         }
 
+        @Override
         protected void onPostExecute(Drawable drawable) {
             if (drawable == null) {
                 // TODO: Show an error message somewhere
