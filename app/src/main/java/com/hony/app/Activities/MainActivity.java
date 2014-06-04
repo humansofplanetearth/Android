@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -11,6 +12,7 @@ import com.hony.app.R;
 import com.hony.app.Utilities.PictureURLGetter;
 
 import android.content.Intent;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -58,6 +60,12 @@ public class MainActivity extends ActionBarActivity {
             }
             ImageView imgView=(ImageView) findViewById(R.id.imageView);
             imgView.setImageDrawable(drawable);
+            imgView.setOnClickListener(new View.OnClickListener(){
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, ImageActivity.class);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
