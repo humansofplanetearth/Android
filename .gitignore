@@ -29,6 +29,7 @@ Thumbs.db
 .idea
 .gradle
 build/
+*.iml
 
 # Misc
 /*/out
