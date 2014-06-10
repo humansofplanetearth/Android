@@ -56,6 +56,7 @@ public class PictureURLGetter {
                 JSONObject original_size = photo.getJSONObject("original_size");
                 String imageUrl = original_size.getString("url");
                 urls.add(new URL(imageUrl));
+                pictureOffset ++;
             }
         }
 
