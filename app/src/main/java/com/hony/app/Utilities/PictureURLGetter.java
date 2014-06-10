@@ -34,7 +34,7 @@ public class PictureURLGetter {
         return urls.get(urlsReported++);
     }
 
-    private void loadURLs() throws IOException, JSONException {
+    public void loadURLs() throws IOException, JSONException {
         URL tumblrAPIURL = new URL(baseUrl +
                 "?api_key=" + tumblrAPIKey +
                 "&filter=text" +
@@ -70,6 +70,10 @@ public class PictureURLGetter {
             sb.append((char) cp);
         }
         return sb.toString();
+    }
+
+    public List getURL() {
+        return urls;
     }
 
     // FROM: http://stackoverflow.com/a/4308662/1928529
