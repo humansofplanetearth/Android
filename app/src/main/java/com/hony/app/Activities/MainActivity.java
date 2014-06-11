@@ -13,6 +13,8 @@ import com.hony.app.Utilities.PictureURLGetter;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 import org.json.JSONException;
@@ -20,14 +22,21 @@ import org.json.JSONException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-
+import java.util.ArrayList;
+import java.util.List;
 public class MainActivity extends ActionBarActivity {
+
+    ArrayList<URL> urls;
+    ImageView image;
+    GridView grid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        urls = new ArrayList<URL>();
+        grid = (GridView) findViewById(R.id.gvGrid);
 
         new DownloadImageTask().execute();
     }
@@ -45,9 +54,11 @@ public class MainActivity extends ActionBarActivity {
         protected Drawable doInBackground(Void... notUsed) {
             PictureURLGetter pictureURLGetter = new PictureURLGetter();
             try {
+                urls = (ArrayList<URL>) pictureURLGetter.getURLArray();
+                System.out.println(urls.toString());
                 URL imageURL = pictureURLGetter.next();
-                Drawable drawable = drawable_from_url(imageURL, "");
-                return drawable;
+              //  Drawable drawable = drawable_from_url(imageURL, "");
+                return null;
             } catch (IOException e) {
                 // TODO: Show a message indicating that something went wrong (most probably no internet connection)
                 e.printStackTrace();
@@ -61,9 +72,10 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Drawable drawable) {
             if (drawable == null) {
+                fillGridView(urls);
                 // TODO: Show an error message somewhere
             }
-            ImageView imgView=(ImageView) findViewById(R.id.imageView);
+            /**ImageView imgView=(ImageView) findViewById(R.id.imageView);
             imgView.setImageDrawable(drawable);
             imgView.setOnClickListener(new View.OnClickListener(){
                 public void onClick(View v) {
@@ -71,6 +83,8 @@ public class MainActivity extends ActionBarActivity {
                     startActivity(intent);
                 }
             });
+             */
+            fillGridView(urls);
         }
     }
 
@@ -93,5 +107,17 @@ public class MainActivity extends ActionBarActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Fill girdView
+     * @param url_list
+     */
+    private void fillGridView(ArrayList<URL> url_list) {
+
+        ArrayAdapter<URL> ad = new ArrayAdapter<URL>(this, R.layout.texts, url_list);
+        grid.setAdapter(ad);
+
+
     }
 }
