@@ -21,11 +21,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
-    ArrayList<URL> urls;
+    List<URL> urls;
     ImageView image;
     GridView grid;
 
@@ -37,7 +38,7 @@ public class MainActivity extends ActionBarActivity {
         urls = new ArrayList<URL>();
         grid = (GridView) findViewById(R.id.gvGrid);
 
-        new DownloadImageTask().execute();
+        new AcquireURLTask().execute();
     }
 
     // FIXME: Experimental, copied from (http://stackoverflow.com/questions/3375166/android-drawable-images-from-url)
@@ -45,17 +46,18 @@ public class MainActivity extends ActionBarActivity {
         return Drawable.createFromStream(((InputStream)url.getContent()), src_name);
     }
 
-    private class DownloadImageTask extends AsyncTask<Void, Void, Drawable> {
+    private class AcquireURLTask extends AsyncTask<Void, Void, Drawable> {
         // FIXME: Experimental code
+
+        Collection<URL> urls = new ArrayList<URL>();
 
         // TODO: Do something sensible if there are multiple urls
         @Override
         protected Drawable doInBackground(Void... notUsed) {
             PictureURLGetter pictureURLGetter = new PictureURLGetter();
             try {
-                urls = (ArrayList<URL>) pictureURLGetter.getURLArray();
-                System.out.println(urls.toString());
                 URL imageURL = pictureURLGetter.next();
+                this.urls.add(imageURL);
               //  Drawable drawable = drawable_from_url(imageURL, "");
                 return null;
             } catch (IOException e) {
@@ -82,7 +84,13 @@ public class MainActivity extends ActionBarActivity {
                 }
             });
              */
-            fillGridView(urls);
+            MainActivity.this.urls.addAll(this.urls);
+            fillGridView(MainActivity.this.urls);
+        }
+
+        @Override
+        protected void onCancelled() {
+            // TODO: Check if this should have some effect
         }
     }
 
@@ -111,7 +119,7 @@ public class MainActivity extends ActionBarActivity {
      * Fill girdView
      * @param url_list
      */
-    private void fillGridView(ArrayList<URL> url_list) {
+    private void fillGridView(List<URL> url_list) {
 
         ArrayAdapter<URL> adapter = new ArrayAdapter<URL>(this, R.layout.texts, url_list);
         grid.setAdapter(adapter);
