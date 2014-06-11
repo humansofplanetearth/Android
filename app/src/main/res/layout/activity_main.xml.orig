@@ -20,6 +20,19 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
+<<<<<<< HEAD
+        android:clickable="true"
+        />
+
+    <GridView
+        android:id="@+id/gvGrid"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:numColumns="2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        </GridView>
+=======
         android:clickable="true" />
 
     <GridView
@@ -32,4 +45,5 @@
     </GridView>
 
 
+>>>>>>> master
 </RelativeLayout>

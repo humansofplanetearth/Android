@@ -34,11 +34,15 @@ public class PictureURLGetter {
         return urls.get(urlsReported++);
     }
 
+<<<<<<< HEAD
+    public void loadURLs() throws IOException, JSONException {
+=======
     public List getURLArray() {
         return urls;
     }
 
     private void loadURLs() throws IOException, JSONException {
+>>>>>>> master
         URL tumblrAPIURL = new URL(baseUrl +
                 "?api_key=" + tumblrAPIKey +
                 "&filter=text" +
