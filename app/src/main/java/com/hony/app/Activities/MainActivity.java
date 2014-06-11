@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,7 +11,6 @@ import com.hony.app.R;
 import com.hony.app.Utilities.PictureURLGetter;
 
 import android.content.Intent;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -52,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 
         // TODO: Do something sensible if there are multiple urls
         @Override
-        protected List<URL> doInBackground(Void... notUsed) {
+        protected Drawable doInBackground(Void... notUsed) {
             PictureURLGetter pictureURLGetter = new PictureURLGetter();
             try {
                 urls = (ArrayList<URL>) pictureURLGetter.getURLArray();
@@ -73,7 +71,6 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Drawable drawable) {
             if (drawable == null) {
-                fillGridView(urls);
                 // TODO: Show an error message somewhere
             }
             /**ImageView imgView=(ImageView) findViewById(R.id.imageView);
