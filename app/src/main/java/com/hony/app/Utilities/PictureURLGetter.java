@@ -45,7 +45,11 @@ public class PictureURLGetter {
                 "&limit=" + picturesPerQuery +
                 "&offset=" + pictureOffset);
         JSONObject jsonRoot = readJsonFromUrl(tumblrAPIURL);
-        // TODO: Check JSONObject "meta"
+        JSONObject jsonMeta = jsonRoot.getJSONObject("meta");
+        if ((! jsonMeta.getString("status").equals("200")) ||
+                (! jsonMeta.getString("msg").equals("OK"))) {
+            // TODO: Show a message indicating that there is a problem loading the image URLs using the Tumblr API
+        }
         JSONObject jsonResponse = jsonRoot.getJSONObject("response");
         JSONArray jsonPosts = jsonResponse.getJSONArray("posts");
         int numberOfPosts = jsonPosts.length();
