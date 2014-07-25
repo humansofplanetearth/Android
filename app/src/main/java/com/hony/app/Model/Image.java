@@ -1,25 +1,32 @@
 package com.hony.app.Model;
 
+import android.graphics.drawable.Drawable;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 public class Image {
-    private Meta meta;
-    private Response response;
+    URL url;
+    int width;
+    int height;
 
-    public Image() {
+    Image(URL url) {
+        this.url = url;
     }
 
-    public Meta getMeta() {
-        return this.meta;
+    Image(URL url, int width, int height) {
+        this(url);
+        this.width = width;
+        this.height = height;
     }
 
-    public void setMeta(Meta meta) {
-        this.meta = meta;
+    Drawable getDrawable() throws IOException {
+        return  getDrawableFromURL(this.url);
     }
 
-    public Response getResponse() {
-        return this.response;
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
+    // FIXME: Experimental, copied from (http://stackoverflow.com/questions/3375166/android-drawable-images-from-url)
+    private Drawable getDrawableFromURL(URL url) throws java.io.IOException {
+        return Drawable.createFromStream(((InputStream)url.getContent()), "");
     }
 }

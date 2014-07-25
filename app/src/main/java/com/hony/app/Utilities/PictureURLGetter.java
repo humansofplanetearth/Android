@@ -1,5 +1,7 @@
 package com.hony.app.Utilities;
 
+import com.hony.app.Model.ImageGroup;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,18 +22,18 @@ public class PictureURLGetter {
     private final static String tumblrAPIKey = "7ag2CJXOuxuW3vlVS5wQG6pYA6a2ZQcSCjzZsAp2pDbVwf3xEk";
     private final static int picturesPerQuery = 3;
     private int pictureOffset = 0;
-    private List<URL> urls;
-    private int urlsReported = 0;
+    private List<ImageGroup> pictures;
+    private int picturesReported = 0;
 
     public PictureURLGetter() {
-        this.urls = new ArrayList<URL>();
+        this.pictures = new ArrayList<ImageGroup>();
     }
 
-    public URL next() throws IOException, JSONException {
-        if (urlsReported >= urls.size()) {
+    public ImageGroup next() throws IOException, JSONException {
+        if (picturesReported >= pictures.size()) {
             this.loadURLs();
         }
-        return urls.get(urlsReported++);
+        return pictures.get(picturesReported++);
     }
 
     private void loadURLs() throws IOException, JSONException {
@@ -55,11 +57,18 @@ public class PictureURLGetter {
             int numberOfPhotos = photos.length();
             for (int j = 0; j < numberOfPhotos; ++ j) {
                 JSONObject photo = photos.getJSONObject(j);
-                // FIXME: Not sure if "original_size" is always available,
-                // because it's not specified in the api documentation (http://www.tumblr.com/docs/en/api/v2)
-                JSONObject original_size = photo.getJSONObject("original_size");
-                String imageUrl = original_size.getString("url");
-                urls.add(new URL(imageUrl));
+                ImageGroup imageGroup = new ImageGroup();
+                JSONArray altSizes = photo.getJSONArray("alt_sizes");
+                // Process the alternative sizes of the photo
+                int numberOfAltSizes = altSizes.length();
+                for (int k = 0; k < numberOfAltSizes; ++ k) {
+                    JSONObject sizePhoto = altSizes.getJSONObject(k);
+                    URL imageUrl = new URL(sizePhoto.getString("url"));
+                    int imageWidth = sizePhoto.getInt("width");
+                    int imageHeight = sizePhoto.getInt("height");
+                    imageGroup.addImage(imageUrl, imageWidth, imageHeight);
+                }
+                pictures.add(imageGroup);
                 pictureOffset ++;
             }
         }
@@ -74,10 +83,6 @@ public class PictureURLGetter {
             sb.append((char) cp);
         }
         return sb.toString();
-    }
-
-    public List getURL() {
-        return urls;
     }
 
     // FROM: http://stackoverflow.com/a/4308662/1928529
