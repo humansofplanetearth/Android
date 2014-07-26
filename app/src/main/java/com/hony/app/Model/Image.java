@@ -10,6 +10,7 @@ public class Image {
     URL url;
     int width;
     int height;
+    Drawable drawable;
 
     Image(URL url) {
         this.url = url;
@@ -22,7 +23,10 @@ public class Image {
     }
 
     Drawable getDrawable() throws IOException {
-        return  getDrawableFromURL(this.url);
+        if (drawable == null) {
+            drawable = getDrawableFromURL(url);
+        }
+        return  drawable;
     }
 
     // FIXME: Experimental, copied from (http://stackoverflow.com/questions/3375166/android-drawable-images-from-url)

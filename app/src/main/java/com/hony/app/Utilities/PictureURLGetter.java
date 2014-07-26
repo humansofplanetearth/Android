@@ -20,28 +20,28 @@ public class PictureURLGetter {
 
     private final static String baseUrl = "http://api.tumblr.com/v2/blog/humansofnewyork.com/posts/photo";
     private final static String tumblrAPIKey = "7ag2CJXOuxuW3vlVS5wQG6pYA6a2ZQcSCjzZsAp2pDbVwf3xEk";
-    private final static int picturesPerQuery = 3;
-    private int pictureOffset = 0;
-    private List<ImageGroup> pictures;
-    private int picturesReported = 0;
+    private final static int imageGroupsPerQuery = 3;
+    private int imageGroupOffset = 0;
+    private List<ImageGroup> imageGroups;
+    private int imageGroupsReported = 0;
 
     public PictureURLGetter() {
-        this.pictures = new ArrayList<ImageGroup>();
+        this.imageGroups = new ArrayList<ImageGroup>();
     }
 
     public ImageGroup next() throws IOException, JSONException {
-        if (picturesReported >= pictures.size()) {
-            this.loadURLs();
+        if (imageGroupsReported >= imageGroups.size()) {
+            this.loadImageGroups();
         }
-        return pictures.get(picturesReported++);
+        return imageGroups.get(imageGroupsReported++);
     }
 
-    private void loadURLs() throws IOException, JSONException {
+    private void loadImageGroups() throws IOException, JSONException {
         URL tumblrAPIURL = new URL(baseUrl +
                 "?api_key=" + tumblrAPIKey +
                 "&filter=text" +
-                "&limit=" + picturesPerQuery +
-                "&offset=" + pictureOffset);
+                "&limit=" + imageGroupsPerQuery +
+                "&offset=" + imageGroupOffset);
         JSONObject jsonRoot = readJsonFromUrl(tumblrAPIURL);
         JSONObject jsonMeta = jsonRoot.getJSONObject("meta");
         if ((! jsonMeta.getString("status").equals("200")) ||
@@ -68,8 +68,8 @@ public class PictureURLGetter {
                     int imageHeight = sizePhoto.getInt("height");
                     imageGroup.addImage(imageUrl, imageWidth, imageHeight);
                 }
-                pictures.add(imageGroup);
-                pictureOffset ++;
+                imageGroups.add(imageGroup);
+                imageGroupOffset++;
             }
         }
 
@@ -91,18 +91,9 @@ public class PictureURLGetter {
         try {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = readAll(rd);
-            JSONObject json = new JSONObject(jsonText);
-            return json;
+            return new JSONObject(jsonText);
         } finally {
             is.close();
-        }
-    }
-
-    
-    public static void main(String args[]) throws IOException, JSONException {
-        PictureURLGetter pictureURLGetter = new PictureURLGetter();
-        for (int i = 0; i < 20; ++ i) {
-            System.out.println(pictureURLGetter.next());
         }
     }
 }
