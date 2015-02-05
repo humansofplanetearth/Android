@@ -28,4 +28,5 @@ dependencies {
     compile 'com.android.support:support-v4:21.0.+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('src/main/java/com/hony/javalibs/jumblr-0.0.10-jar-with-dependencies.jar')
+    compile 'commons-io:commons-io:2.4'
 }
