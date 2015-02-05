@@ -1,10 +1,10 @@
 package com.hony.app.Activities;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.Menu;
@@ -13,11 +13,15 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hony.app.Model.ImageGroup;
 import com.hony.app.R;
-import com.hony.app.Utilities.PictureURLGetter;
+import com.hony.app.Utilities.ImageGViewPair;
+import com.hony.app.Utilities.ImageURLLoader;
+import com.hony.app.Utilities.ImageLoader;
 
 import org.json.JSONException;
 
@@ -25,8 +29,10 @@ import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity implements OnTouchListener {
 
-    PictureURLGetter pictureURLGetter = new PictureURLGetter();
+    ImageURLLoader imageURLLoader = new ImageURLLoader();
+    RelativeLayout body;
     ImageView imageView;
+    TextView descriptionView;
     int currentPictureID = 0;
     ImageGroup currentImageGroup;
 
@@ -40,8 +46,9 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        body = (RelativeLayout) this.findViewById(R.id.body);
         imageView = (ImageView) this.findViewById(R.id.image);
-        // TODO: Set loading image
+        descriptionView = (TextView) this.findViewById(R.id.description);
         new AcquireImageGroupTask().execute(currentPictureID);
 
         // Gesture detection
@@ -52,7 +59,7 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
             }
         };
         // Do this for each view added to the grid
-        imageView.setOnTouchListener(gestureListener);
+        body.setOnTouchListener(gestureListener);
     }
 
     private class AcquireImageGroupTask extends AsyncTask<Integer, Void, ImageGroup> {
@@ -63,7 +70,7 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
             int position = positions[0];
             // TODO: Use the position variable to load the right picture
             try {
-                return pictureURLGetter.next();
+                return imageURLLoader.next();
             } catch (IOException e) {
                 // TODO: Show a message indicating that something went wrong (most probably no internet connection)
                 e.printStackTrace();
@@ -78,35 +85,13 @@ public class MainActivity extends ActionBarActivity implements OnTouchListener {
         protected void onPostExecute(ImageGroup imageGroup) {
             if (imageGroup == null) {
                 // TODO: Report error
+                Log.e("LOADING", "Error loading imageGroup");
                 return;
             }
+            MainActivity.this.descriptionView.setText(imageGroup.getCaption());
             MainActivity.this.currentImageGroup = imageGroup;
-            new AcquireDrawableTask().execute(currentImageGroup);
-        }
-    }
-
-    private class AcquireDrawableTask extends AsyncTask<ImageGroup, Void, Drawable> {
-
-        // Only the first imageGroup is used, all others are ignored
-        @Override
-        protected Drawable doInBackground(ImageGroup... imageGroups) {
-            ImageGroup imageGroup = imageGroups[0];
-            try {
-                return imageGroup.getDrawable();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Drawable drawable) {
+            new ImageLoader().execute(new ImageGViewPair(currentImageGroup, MainActivity.this.imageView));
             findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-            if (drawable == null) {
-                // TODO: Report error
-                return;
-            }
-            MainActivity.this.imageView.setImageDrawable(drawable);
         }
     }
 

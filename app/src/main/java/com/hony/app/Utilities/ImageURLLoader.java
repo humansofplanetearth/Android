@@ -17,7 +17,7 @@ import org.json.JSONObject;
 
 import org.apache.commons.io.IOUtils;
 
-public class PictureURLGetter {
+public class ImageURLLoader {
 
     private final static String baseUrl = "http://api.tumblr.com/v2/blog/humansofnewyork.com/posts/photo";
     private final static String tumblrAPIKey = "7ag2CJXOuxuW3vlVS5wQG6pYA6a2ZQcSCjzZsAp2pDbVwf3xEk";
@@ -26,7 +26,7 @@ public class PictureURLGetter {
     private List<ImageGroup> imageGroups;
     private int imageGroupsReported = 0;
 
-    public PictureURLGetter() {
+    public ImageURLLoader() {
         this.imageGroups = new ArrayList<ImageGroup>();
     }
 
@@ -53,10 +53,11 @@ public class PictureURLGetter {
         JSONArray jsonPosts = jsonResponse.getJSONArray("posts");
         for (int i = 0; i < jsonPosts.length(); ++ i) {
             JSONObject post = jsonPosts.getJSONObject(i);
+            String caption = post.getString("caption");
             JSONArray photos = post.getJSONArray("photos");
             for (int j = 0; j < photos.length(); ++ j) {
                 JSONObject photo = photos.getJSONObject(j);
-                ImageGroup imageGroup = new ImageGroup();
+                ImageGroup imageGroup = new ImageGroup(caption);
                 JSONArray altSizes = photo.getJSONArray("alt_sizes");
                 // Process the alternative sizes of the photo
                 for (int k = 0; k < altSizes.length(); ++ k) {

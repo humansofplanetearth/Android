@@ -9,9 +9,11 @@ import java.util.List;
 
 public class ImageGroup {
     private List<Image> variants;
+    private String caption;
 
-    public ImageGroup() {
+    public ImageGroup(String caption) {
         variants = new ArrayList<Image>();
+        this.caption = caption;
     }
 
     public void addImage(URL url, int width, int height) {
@@ -21,5 +23,9 @@ public class ImageGroup {
 
     public Drawable getDrawable() throws IOException {
         return variants.get(0).getDrawable();
+    }
+    
+    public String getCaption() {
+        return this.caption;
     }
 }
